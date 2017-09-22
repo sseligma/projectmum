@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Project MUM</title>
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/can.custom.js"></script>
+<script type="text/javascript" src="js/unslider.min.js"></script>
+
+<link rel='stylesheet' id='projectmum-css' href='css/projectmum.css' type='text/css' media='all' />
+
+<!-- ARCGIS -->
+
+<link rel="stylesheet" href="http://js.arcgis.com/3.9/js/esri/css/esri.css">
+<script src="http://js.arcgis.com/3.9/"></script>
+<!-- MAP -->
+<script type="text/javascript" src="js/map.js" ></script>    
+
+
+
+<script type="text/javascript">
+
+	function ReloadMap () { 
+		   var f = document.getElementById("mapFrame"); 
+		   if (f != null) 
+		     f.src=f.src; 
+	} 
+
+    var slider;
+	var sliderKey = "0AoIIgEJhj6r4dG5Ud3Y4MGRKZVBZamFMTmpCNm50aWc";
+
+	function getGoogleData(key, func) {
+
+		var url = "https://spreadsheets.google.com/feeds/list/" + key
+				+ "/od6/public/values?alt=json";
+
+		$.getJSON(url, function(data) {
+			window[func](data);
+		});
+	}
+
+	function getSliderData(data) {
+		slider = data.feed.entry;
+
+		for ( var i = 0; i < slider.length; i++) {
+
+			var li = "";
+			li += "<li style=\"background-image: url('images/slider/"
+					+ slider[i].gsx$sliderimage.$t
+					+ "'); \" >"
+					+ "<div class=\"banner-caption\">"
+					+ "<h1 >"
+					+ slider[i].gsx$event.$t
+					+ "</h1>"
+					+ "<p  class=\"lead\">"
+					+ slider[i].gsx$date.$t
+					+ " | "
+					+ slider[i].gsx$cost.$t
+					+ "</p>"
+					+ "<a class=\"btn btn-large btn-primary\" href=\"#!location\">"
+					+ slider[i].gsx$address.$t + "</a>" + "</div>" + "</li>";
+
+			$("#sliderList").append(li);
+		}
+
+		$('.banner').unslider({
+			fluid : true,
+			dots : false,
+			speed : 500
+		});
+	}
+
+	$(document).ready(function() {
+
+		getGoogleData(sliderKey, 'getSliderData');
+
+		Router = can.Control({
+			"route" : function() {
+				console.log("the hash is #!");
+				$("#pageHome").show();
+				$("#pageYou").hide();
+				$("#pageDetails").hide();
+				$("#pageAbout").hide();
+				$("#pageLocation").hide();
+			},
+			"location route" : function() {
+				console.log("the hash is #!location");
+				$("#pageYou").hide();
+				$("#pageHome").hide();
+				$("#pageDetails").hide();
+				$("#pageAbout").hide();
+				$("#pageLocation").show();
+				ReloadMap();
+			},
+			"you route" : function() {
+				console.log("the hash is #!you");
+				$("#pageYou").show();
+				$("#pageHome").hide();
+				$("#pageDetails").hide();
+				$("#pageAbout").hide();
+				$("#pageLocation").hide();
+			},
+			"details route" : function() {
+				console.log("the hash is #!creators");
+				$("#pageYou").hide();
+				$("#pageHome").hide();
+				$("#pageDetails").show();
+				$("#pageAbout").hide();
+				$("#pageLocation").hide();
+			},
+			"about route" : function() {
+				console.log("the hash is #!about");
+				$("#pageYou").hide();
+				$("#pageHome").hide();
+				$("#pageDetails").hide();
+				$("#pageAbout").show();
+				$("#pageLocation").hide();
+			}
+		});
+
+		// make sure to initialize the Control
+		new Router(document);
+		can.route.ready();
+
+		ReloadMap();
+		
+	}); // end document.ready
+</script>
+</head>
+<body>
+    <a name="top"></a>
+	<div class="logo">
+		<h1>
+			<a class="site-logo" href="index.html"
+				title="Project Mum | "><img src="images/mum.banner11.gif"
+				alt="Back Home" style="max-width: 900px;"></a>
+		</h1>
+	</div>
+
+	<div id="pageHome">
+
+		<div class="banner">
+			<ul id="sliderList">
+			</ul>
+		</div>
+		<!-- end banner -->
+
+		<div id="pageMenu" class="pageMenu"
+			style="display: table; width: 100%; table-layout: fixed;">
+
+			<span class="pageMenuItem"
+				style="display: table-cell; text-align: center;">
+				<h2>You</h2>
+				<p>Come to Project MUM!</p>
+				<p>
+					<a class="btn btn-primary" href="#!you" title="You">Read more »</a>
+				</p>
+			</span> <span class="pageMenuItem"
+				style="display: table-cell; text-align: center;">
+				<h2>Details</h2>
+				<p>Musicians, Artists, Planners</p>
+				<p>
+					<a class="btn btn-primary" href="#!details" title="Details">Read
+						more »</a>
+				</p>
+			</span> <span class="pageMenuItem"
+				style="display: table-cell; text-align: center;">
+				<h2>About</h2>
+				<p>The history of Project MUM</p>
+				<p>
+					<a class="btn btn-primary" href="#!about" title="About">Read
+						more »</a>
+				</p>
+			</span>
+
+		</div>
+		<!-- end pageMenu -->
+
+		<hr class="featurette-divider">
+
+
+		<div style="text-align: center;">
+			<h2 class="entry-title format-icon">
+				<a href="#!thanks" title="Permalink to Thanks"
+					style="text-decoration: none;">Thanks</a>
+			</h2>
+		</div>
+
+
+		<div id="thanksRow" style="display: table; width: 100%; table-layout: fixed;">
+
+			<span style="display: table-cell; text-align: center;"> <a
+				href="http://www.fireflyartscollective.org"> <img alt=""
+					src="images/ff.logo.resized.png" title="Thanks" />
+			</a>
+			</span> <span style="display: table-cell; text-align: center;"> <a
+				href="http://www2.cambridgema.gov/cac"> <img alt=""
+					src="images/caclogo.resized.jpg" title="Thanks" />
+			</a>
+			</span> <span style="display: table-cell; text-align: center;"> <a
+				href="http://www.cambridgema.gov/theworks.aspx"> <img alt=""
+					src="images/cambridge.dpw.logo.resized.png" title="Thanks" />
+			</a>
+			</span> <span style="display: table-cell; text-align: center;"> <a
+				href="http://www.cambridgema.gov"> <img alt=""
+					src="images/city-seal.resized.jpg" title="Thanks" />
+			</a>
+			</span>
+		</div><!-- end thanksRow -->
+
+		
+	</div> <!-- end pageHome -->
+
+
+	<div id="pageLocation" >
+
+		<div style="margin-left: 10%; margin-right: 10%;" >
+		
+		<header>
+			<h1 class="entry-title format-icon" style="font-size: 3em;">Location
+			</h1>
+			<hr class="featurette-divider">
+		</header>
+
+		<p>STARBASE MUM 2014 will be held at University Park Commons in
+			Cambridge, near Central Square on Sidney Street.</p>
+
+		<p>Please be kind to our neighbors: use public transportation,
+			bicycle or walk as much as possible! The Central Square Redline stop
+			is just a short walk away.</p>
+
+		<p>Project MUM is a Leave No Trace Event. Thank you for your help
+			in leaving the neighborhood better than you found it!</p>
+		
+		<iframe id="mapFrame" width="800" height="350" frameborder="0"
+			scrolling="no" marginheight="0" marginwidth="0"
+			src="https://maps.google.com/maps/ms?msa=0&amp;msid=207223663076267266908.0004f715ecadc0b478b58&amp;ie=UTF8&amp;t=m&amp;ll=42.362286,-71.101456&amp;spn=0.011099,0.034332&amp;z=15&amp;output=embed"></iframe>
+		<br />
+		<small>View <a
+			href="https://maps.google.com/maps/ms?msa=0&amp;msid=207223663076267266908.0004f715ecadc0b478b58&amp;ie=UTF8&amp;t=m&amp;ll=42.362286,-71.101456&amp;spn=0.011099,0.034332&amp;z=15&amp;source=embed"
+			style="color: #0000FF; text-align: left">STARBASE MUM</a> in a larger
+			map
+		</small>
+
+
+		</div>
+
+		<!-- 
+		<div class="claro">
+				<div id="mumMap" style="height: 100%; width: 100%; margin: 0; padding: 0;" ></div>
+		</div>
+		 -->
+		
+
+	</div><!-- end pageLocation -->
+
+	<div id="pageYou" style="margin-left: 10%; margin-right: 10%;">
+		<header>
+			<h1 class="entry-title format-icon" style="font-size: 3em;">You</h1>
+			<hr class="featurette-divider">
+		</header>
+
+		<p>
+			<strong>Dance</strong>
+		</p>
+
+		The MUM team knows: our success is thanks to your participation! We welcome costumes, props and dance moves inspired by our theme. Too busy to get all dolled up? Just wear your dancing shoes and come boogie.
+
+		<p>
+			<strong>Participate</strong>
+		</p>
+
+		STARBASE MUM is a collaboration with the Firefly Arts Collective. If you are interested in sharing your art/skill/time with the community,
+		check out <a href="http://fireflyartscollective.org/firefly-sculpture-garden-starbase-mum/" target="_blank" >our call for participation</a> and be part of our space shenanigans. 
+		
+		<p>
+			<strong>Leave No Trace</strong>
+		</p>
+
+		MUM is a Leave No Trace event: please help keep the event space tidy! We will have garbage and recycling receptacles on site that
+		 we will carry off at the end of the night. Please be kind to our neighbors, help take care of our streets,
+		  so that we can continue to bring you more MUM year after year.
+
+
+		<p>
+			<strong>Support MUM!</strong>
+		</p>
+
+		<p>Thank you for your contribution &#8211; every little bit helps
+			make Project MUM possible!</p>
+<!--
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post"
+			target="_top">
+			<input type="hidden" name="cmd" value="_s-xclick"><br /> <input
+				type="hidden" name="encrypted"
+				value="-----BEGIN PKCS7-----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-----END PKCS7-----"><br />
+			<input type="image"
+				src="http://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
+				name="submit" alt="PayPal - The safer, easier way to pay online!"><br />
+			<img alt="" border="0"
+				src="http://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+				height="1"><br />
+		</form>
+-->
+		<p>
+			<strong>More</strong>
+		</p>
+		<p>Want to participate in ways more than just dance? Have that
+			special skill you&#8217;d like to share with our community of
+			incredible movers and shakers? Contact us!</p>
+
+	</div>
+	<!-- End pageYou -->
+
+	<div id="pageDetails" style="margin-left: 10%; margin-right: 10%;">
+		<header>
+			<h1 class="entry-title format-icon" style="font-size: 3em;">Details</h1>
+			<hr class="featurette-divider">
+		</header>
+
+
+		<p><strong>STARBASE MUM: Lost in Space</strong></p>
+
+After a year long mission in the far reaches of outer space, the Interstellar Starship MUM began its long journey back home to McGrath. Our intrepid spacetronauts were looking forward to the homecoming Project MUM Party that always marks their return...however the MUM crew ran into some trouble when our chief engineer realized the Infinite Improbability Drive was busted!  
+
+The daring team found themselves near the Charles Nebula by the Cambridge system. Opening all hailing channels they learned that the Fleet Commander of Cambridge system had heard tales of Interstellar Starship MUM and it’s crew’s various adventures! The MUM team found themselves welcomed with joy and were advised to plot a trajectory to land at an interstellar trading post in a celebration dubbed The Cambridge River Festival.
+
+The crew of Interstellar Starship MUM invites you to join them in celebrating art, music, dance at the Cambridge River Festival at STARBASE MUM.
+
+
+		<p>
+			<strong>STARBASE MUM is made Possible By:</strong>
+		</p>
+
+		<p>
+			<strong>DJs:</strong>
+		</p>
+
+                <p>
+                  8-9pm: <a href="http://soundcloud.com/buttnekked" target="_blank">Buttnekked Wonder</a> 
+                         (<a href="https://soundcloud.com/buttnekked/get-funked-9-4-13" target="_blank">Music Sample</a>, 
+                          <a href="https://soundcloud.com/buttnekked/buttnekked-live-pinkies-out" target="_blank" >More Music</a>)
+                  <br/> 
+                  When the mothership first descended, it brought pure funk to the people of Earth. And it was good. And the people danced. Its joy was spread far and wide and laid roots across the planet to bloom for the future generations of mankind. One such root made its way to New England and brought with it the BUTTNEKKED WONDER. The influences are too many to list, but you can feel the love, the bounce, the relentless funk spanning across the ages as you listen to his mixes and find yourself needing to dance. So dance my friends, dance!
+                </p>
+
+                <p>
+                  9-10pm: <a href="http://djpussywillow.com/" target="_blank">DJ Pussywillow</a> (gnomefatty kollektiv / circle / radical faeries)
+                  <br />
+                  Grounded in house music, incorporating tribal, world beat, hip hop, bounce, techno, and spoken word, DJ Pussywillow will travel to the edges of the musical universe in his unending mission to spread joy and bounce booties. Expect much bass - and a few trout!
+                </p>
+
+                <p>
+                  10-11pm: <a href="http://soundcloud.com/cosinezero" target="_blank" >cosinezero</a> 
+                           (<a href="http://plus.google.com/u/0/b/106559269040357653218" target="_blank" >Google+</a>, 
+                            <a href="https://www.facebook.com/cosinezero" target="_blank" >Facebook</a>) 
+                  <br />
+                  Selecting from a varied collection of electronica and broken beats, cosinezero brings a dark futurist and retro feel to the finest dancefloors around. As an avid dancer, cosine is in touch with the dancefloor's needs, and delivers intense energy and entertainment. Frequently found dancing in clubs, few djs understand and appreciate what is necessary to put the floor into motion as much as he does.
+                </p>
+
+		<p>
+			<strong>Sound: <a href="http://www.sonicbeating.org/" target="_blank">Sonic Beating</a></strong>
+		</p>
+
+		<p>
+			<strong>Artists:</strong>
+                </p>
+
+                <p>
+                        Angry Poodle Stomach by Michael DeLisle<br />
+                        BenderBot by Blake Courtney<br />
+                        Eye Candy by Video Bleep<br />
+                        The Galaxy by Doug Ruuska<br />
+                        Paper CrossPLAY by Sadiya Sheeba<br />
+                        Photography by Keith Simmons<br />
+                        Timelapse by Pretzel<br />
+                        Waterfell Star String by Courtney Jane Brown<br /> 
+		</p>
+
+                <p>
+                   <strong>Plus:</strong>
+                <p>
+
+                <p>
+                  <strong>Volunteer Coordinator: <strong>Kathleen VirgoQueen
+                </p>
+		<p>
+			<strong>STARBASE MUM Team 2014:</strong>
+		</p>
+
+		Sadiya Sheeba<br /> Nathan Lachenmyer<br /> Pecan<br /> Seth
+		Seligman<br /> y.t.<br />
+
+
+	</div>
+	<!-- End pageCreators -->
+
+	<div id="pageAbout" style="margin-left: 10%; margin-right: 10%;">
+
+		<header>
+			<h1 class="entry-title format-icon" style="font-size: 3em;">About</h1>
+			<hr class="featurette-divider">
+		</header>
+
+		<p>
+			<strong>Our mission</strong>
+		</p>
+
+		The MUM producers are passionate about reclaiming underutilized public
+		spaces to create free, outdoor events for the public. MUM events
+		connect local businesses, residents, and artists together to celebrate
+		art and community.
+
+		<p>
+			<strong>Our story</strong>
+		</p>
+
+		Project MUM, a Somerville-born outdoor dance party was created with
+		support from the Somerville Arts Council. Local artists and performers
+		collaborate to create it year after year, free to the public. This
+		beloved dance party began in 2006 under the direction of Nave Gallery
+		in Somerville. It ran annually under McGrath Highway for several
+		years, followed by a brief retirement in earth year 2011. In 2012,
+		Project MUM piqued the interest of a small team of producers and
+		artists based in Somerville and Cambridge. After some healthy
+		wrangling efforts, Project MUM rebirthed under McGrath highway with
+		spaceships and laser displays galore. It received such positive
+		feedback from the community that the new MUM team was inspired to
+		return year after to year.
+
+		<p>
+			<strong>Thank you</strong>
+		</p>
+
+		If you’re a regular attendee of MUM events, the MUM team appreciates
+		your support! We look forward to sharing magical public spaces with
+		you in the near future.
+
+
+		<p>
+			<strong>Past Projects</strong>
+		</p>
+
+		<a href="http://projectmum.org/2012">Project MUM 2012</a><br />
+                <ul>
+                  <li><a href="https://www.facebook.com/events/364911086912226/">Facebook</a></li>
+                  <li><a href="http://www.flickr.com/photos/dreamexplorer/sets/72157631547446521/">Photos</a></li>
+                </ul>
+
+		<a href="http://projectmum.org/2013">Project MUM 2013</a><br />
+                <ul>
+                <li><a href="https://www.facebook.com/events/150263711842227/">Facebook</a></li>
+                <li><a href="http://www.flickr.com/photos/dreamexplorer/sets/72157635964964745/">Photos</a></li>
+                <!-- <li><a href="http://vimeo.com/74675895">Aerial video</a></li> -->
+                </ul>
+
+	</div>
+	<!-- End pageAbout -->
+
+<hr class="featurette-divider">
+
+
+	<footer id="footer">
+
+		<div class=" footer-widgets">
+
+			<div id="commentsRow" style="display: table; width: 100%; table-layout: fixed;">
+
+				<div
+					style="display: table-cell; text-align: center; padding-left: 3%; padding-right: 3%;">
+
+					<aside id="text-5" class="widget widget_text">
+						<h3 class="widget-title">&#8220;Great work, MUMmers! What a
+							fun time! Hope there will be more MUMents like that one in the
+							future :0)&#8221;</h3>
+						<div class="textwidget">
+							<p>- Jeannine</p>
+						</div>
+					</aside>
+
+					<aside id="text-2" class="widget widget_text">
+						<h3 class="widget-title">&#8220;What a great gathering
+							&#8211; thanks again for everyone&#8217;s efforts to create urban
+							art and music spaces in the Boston area &#8211; you are much
+							appreciated! \ ? /&#8221;</h3>
+						<div class="textwidget">
+							<p>- Kenneth</p>
+						</div>
+					</aside>
+				</div>
+
+				<div
+					style="display: table-cell; text-align: center; padding-left: 3%; padding-right: 3%;">
+					<aside id="text-7" class="widget widget_text">
+						<h3 class="widget-title">&#8220;Thanks to everyone who helped
+							put on such an awesome event! Loved the DJs, artists and how many
+							of peeps were there rockin out under McGrath Saturday night! I ?
+							Somerville! &#8211;</h3>
+						<div class="textwidget">
+							<p>- Clare Dawn</p>
+						</div>
+					</aside>
+
+					<aside id="text-4" class="widget widget_text">
+						<h3 class="widget-title">&#8220;This event is why I am proud
+							to live in Somerville..&#8221;</h3>
+						<div class="textwidget">
+							<p>- Josh</p>
+						</div>
+					</aside>
+				</div>
+
+				<div
+					style="display: table-cell; text-align: center; padding-left: 3%; padding-right: 3%;">
+
+					<aside id="text-5" class="widget widget_text">
+						<h3 class="widget-title">&#8220;Great work, MUMmers! What a
+							fun time! Hope there will be more MUMents like that one in the
+							future :0)&#8221;</h3>
+						<div class="textwidget">
+							<p>- Jeannine</p>
+						</div>
+					</aside>
+
+					<aside id="text-2" class="widget widget_text">
+						<h3 class="widget-title">&#8220;What a great gathering
+							&#8211; thanks again for everyone&#8217;s efforts to create urban
+							art and music spaces in the Boston area &#8211; you are</h3>
+						<div class="textwidget">
+							<p>- Kenneth</p>
+						</div>
+					</aside>
+				</div>
+
+			</div>
+			<!-- end commentsRow -->
+		</div>
+		<!--  end container -->
+	</footer>
+
+
+	<div id="creditsRow" style="margin-top:1em; margin-bottom:1em; text-align:center;">
+
+		<span style="padding-left:5%; padding-right:5%;">
+		<a href="https://www.facebook.com/pages/Project-MUM/217095541772741"
+		   title="Follow me on facebook" 
+		   target=_blank><img src="images/FB-f-Logo__white_29.png" /></a>
+		</span>
+		
+		<span style="padding-left:5%; padding-right:5%;">		
+		&middot; &copy; 2014 <a href="index.html#!"
+							title="Project Mum" rel="bookmark">Project Mum</a>
+	    </span>
+	    
+	    <span style="padding-left:5%; padding-right:5%;">
+			<a href="#top">Back to top</a>
+		</span>
+	</div>
+
+
+</body>
+</html>
